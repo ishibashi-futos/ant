@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<project name="ant test" basedir="." default="testEach">
+  <target name="testEach">
+    <ant target="test">
+      <property name="env" value="${developmentDirectory}" />
+    </ant>
+    <ant target="test">
+      <property name="env" value="${stagingDirectory}" />
+    </ant>
+    <ant target="test">
+      <property name="env" value="${productionDirectory}" />
+    </ant>
+  </target>
+  <target name="test">
+    <ant target="clean" />
+    <ant target="echo" />
+    <delete dir="${target}" />
+  </target>
+
+  <property name="target" value="target" />
+  <property name="env" value="dev" />
+  <property name="developmentDirectory" value="dev" />
+  <property name="stagingDirectory" value="stg" />
+  <property name="productionDirectory" value="prod" />
+
+  <!-- timestampを取得する -->
+  <tstamp>
+    <format property="OLD120" offset="-120" unit="day"
+      pattern="yyyyMMdd" />
+    <format property="OLD7" offset="-7" unit="day"
+      pattern="yyyyMMdd" />
+  </tstamp>
+  <target name="echo">
+    <echo>120日前 ${OLD120}</echo>
+    <echo>7日前 ${OLD7}</echo>
+  </target>
+  <target name="clean">
+    <ant target="beforeEach" />
+    <delete dir="${target}/${env}/${OLD120}/" />
+    <delete dir="${target}/${env}/${OLD7}/" />
+  </target>
+  <target name="beforeEach">
+    <mkdir dir="${target}/${env}/${OLD120}" />
+    <touch file="${target}/${env}/${OLD120}/test.txt" />
+    <mkdir dir="${target}/${env}/${OLD7}" />
+    <touch file="${target}/${env}/${OLD7}/test.txt" />
+  </target>
+
+  <target name="argument">
+    <echo>Show: env=${env}</echo>
+  </target>
+
+  <target name="delete-sample">
+    <!-- Tasks https://ant.apache.org/manual/Tasks/delete.html -->
+    <delete dir="target/" />
+    <delete file="logs/application.log.bak" />
+    <delete includeEmptyDirs="true">
+      <fileset dir="." includes="logs/**/*.log" />
+    </delete>
+  </target>
+
+</project>
