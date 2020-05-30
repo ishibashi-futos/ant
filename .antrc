@@ -1,2 +1,2 @@
-export JAVA_HOME=$(pwd)/jdk8u252-b09-jre
+export JAVA_HOME=$(pwd)/jdk8u252-b09
 alias ant=$(pwd)/apache-ant-1.10.8/bin/ant

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <project name="ant test" basedir="." default="testEach">
+  <property name="src.dir" location="src/main/java" />
+  <property name="build.dir" location="target/" />
+
   <target name="testEach">
     <ant target="test">
       <property name="env" value="${developmentDirectory}" />
@@ -12,7 +15,7 @@
     </ant>
   </target>
   <target name="test">
-    <ant target="clean" />
+    <ant target="delete" />
     <ant target="echo" />
     <delete dir="${target}" />
   </target>
@@ -34,7 +37,7 @@
     <echo>120日前 ${OLD120}</echo>
     <echo>7日前 ${OLD7}</echo>
   </target>
-  <target name="clean">
+  <target name="delete">
     <ant target="beforeEach" />
     <delete dir="${target}/${env}/${OLD120}/" />
     <delete dir="${target}/${env}/${OLD7}/" />
@@ -57,6 +60,22 @@
     <delete includeEmptyDirs="true">
       <fileset dir="." includes="logs/**/*.log" />
     </delete>
+  </target>
+
+  <target name="clean">
+    <delete dir="target/" />
+    <mkdir dir="target/" />
+  </target>
+
+  <target name="compile">
+    <path id="classpath">
+      <pathelement location="${lib.dir}/**" />
+    </path>
+    <javac srcdir="${src.dir}" destdir="${build.dir}"
+        source="1.8"
+        debug="on"
+        classpath="lib/commons-lang3-3.3.2.jar"
+    />
   </target>
 
 </project>
