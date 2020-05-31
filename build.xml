@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <project name="ant test" basedir="." default="testEach">
+  <property name="jar.name" value="App" />
   <property name="src.dir" location="src/main/java" />
-  <property name="build.dir" location="target/" />
-  <path id="classpath">
-    <pathelement location="${lib.dir}/**" />
-  </path>
+  <property name="build.dir" location="target/classes" />
+  <property name="build.lib" location="target/lib" />
+  <property name="lib.dir" location="lib/" />
   <property environment="env"/>
+  <property name="src.basePackage" value="com.github.fishibashi" />
+  <property name="src.main" value="App" />
 
   <target name="testEach">
     <ant target="test">
@@ -68,7 +70,7 @@
 
   <target name="clean">
     <delete dir="target/" />
-    <mkdir dir="target/" />
+    <mkdir dir="${build.dir}" />
   </target>
 
   <property name="JAVA_HOME" value="${env.JAVA_HOME}" />
@@ -82,10 +84,15 @@
         source="${src.version}"
         target="${src.target}"
         debug="on"
-        classpath="lib/commons-lang3-3.3.2.jar"
         includeantruntime="false"
         executable="${JAVA_HOME}/bin/javac"
-    />
+    >
+      <classpath>
+        <fileset dir="lib/">
+          <include name="*.jar" />
+        </fileset>
+      </classpath>
+    </javac>
   </target>
 
   <target name="compile-java11">
@@ -95,6 +102,33 @@
       <property name="src.version" value="1.8" />
       <property name="src.target" value="1.8" />
     </ant>
+  </target>
+
+  <target name="jar">
+    <ant target="clean" />
+    <ant target="compile" />
+    <echo>jarファイルを作成します</echo>
+    <jar basedir="${build.dir}" destfile="${build.lib}/${jar.name}.jar"/>
+    <copy todir="${build.lib}/">
+      <fileset dir="${lib.dir}">
+        <include name="*.jar" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="run">
+    <ant target="jar" />
+    <java classname="${src.basePackage}.${src.main}"
+      maxmemory="256m"
+      fork="false"
+      jvm="${env.JAVA_HOME_11}/bin/java"
+      >
+      <classpath>
+        <fileset dir="target/lib/">
+          <include name="*.jar" />
+        </fileset>
+      </classpath>
+    </java>
   </target>
 
 </project>
