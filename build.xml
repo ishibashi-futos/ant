@@ -2,6 +2,10 @@
 <project name="ant test" basedir="." default="testEach">
   <property name="src.dir" location="src/main/java" />
   <property name="build.dir" location="target/" />
+  <path id="classpath">
+    <pathelement location="${lib.dir}/**" />
+  </path>
+  <property environment="env"/>
 
   <target name="testEach">
     <ant target="test">
@@ -67,15 +71,30 @@
     <mkdir dir="target/" />
   </target>
 
+  <property name="JAVA_HOME" value="${env.JAVA_HOME}" />
+  <property name="src.version" value="1.8" />
+  <property name="src.target" value="1.8" />
+
   <target name="compile">
-    <path id="classpath">
-      <pathelement location="${lib.dir}/**" />
-    </path>
+    <ant target="clean" />
+    <property environment="env"/>
     <javac srcdir="${src.dir}" destdir="${build.dir}"
-        source="1.8"
+        source="${src.version}"
+        target="${src.target}"
         debug="on"
         classpath="lib/commons-lang3-3.3.2.jar"
+        includeantruntime="false"
+        executable="${JAVA_HOME}/bin/javac"
     />
+  </target>
+
+  <target name="compile-java11">
+    <ant target="clean" />
+    <ant target="compile">
+      <property name="JAVA_HOME" value="${env.JAVA_HOME_11}" />
+      <property name="src.version" value="1.8" />
+      <property name="src.target" value="1.8" />
+    </ant>
   </target>
 
 </project>
